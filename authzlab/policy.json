@@ -1,0 +1,192 @@
+{
+  "schema_version": "1.0",
+  "policy_name": "Synthetic invoice access policy",
+  "policy_version": "1.0.0",
+  "cases": [
+    {
+      "id": "public-catalog",
+      "title": "Anonymous users may read the public catalog",
+      "method": "GET",
+      "path": "/catalog",
+      "actor": null,
+      "expected": 200,
+      "body": null,
+      "expected_response": {
+        "items": [
+          "Synthetic public product"
+        ]
+      }
+    },
+    {
+      "id": "anonymous-read",
+      "title": "Anonymous users cannot read an invoice",
+      "method": "GET",
+      "path": "/invoices/inv-100",
+      "actor": null,
+      "expected": 401,
+      "body": null
+    },
+    {
+      "id": "invalid-token",
+      "title": "Unknown identities cannot read an invoice",
+      "method": "GET",
+      "path": "/invoices/inv-100",
+      "actor": "unknown",
+      "expected": 401,
+      "body": null
+    },
+    {
+      "id": "owner-read",
+      "title": "The invoice owner may read their invoice",
+      "method": "GET",
+      "path": "/invoices/inv-100",
+      "actor": "alice",
+      "expected": 200,
+      "body": null,
+      "expected_response": {
+        "id": "inv-100",
+        "tenant": "north",
+        "owner": "alice"
+      }
+    },
+    {
+      "id": "peer-read",
+      "title": "Another member of the same tenant cannot read an owner's invoice",
+      "method": "GET",
+      "path": "/invoices/inv-100",
+      "actor": "bob",
+      "expected": 403,
+      "body": null
+    },
+    {
+      "id": "tenant-admin-read",
+      "title": "A tenant administrator may read an invoice in their tenant",
+      "method": "GET",
+      "path": "/invoices/inv-100",
+      "actor": "nora",
+      "expected": 200,
+      "body": null,
+      "expected_response": {
+        "id": "inv-100",
+        "tenant": "north",
+        "owner": "alice"
+      }
+    },
+    {
+      "id": "cross-tenant-read",
+      "title": "A member of another tenant cannot read the invoice",
+      "method": "GET",
+      "path": "/invoices/inv-100",
+      "actor": "eve",
+      "expected": 403,
+      "body": null
+    },
+    {
+      "id": "cross-tenant-admin",
+      "title": "Administrator privileges do not cross tenant boundaries",
+      "method": "GET",
+      "path": "/invoices/inv-100",
+      "actor": "sam",
+      "expected": 403,
+      "body": null
+    },
+    {
+      "id": "missing-object",
+      "title": "Unknown object identifiers return not found",
+      "method": "GET",
+      "path": "/invoices/absent",
+      "actor": "alice",
+      "expected": 404,
+      "body": null
+    },
+    {
+      "id": "anonymous-write",
+      "title": "Anonymous users cannot change an invoice",
+      "method": "PATCH",
+      "path": "/invoices/inv-100",
+      "actor": null,
+      "expected": 401,
+      "body": {
+        "memo": "Unauthorized fixture change"
+      },
+      "verify_actor": "alice",
+      "expect_unchanged": true
+    },
+    {
+      "id": "peer-write",
+      "title": "A peer cannot change an owner's invoice",
+      "method": "PATCH",
+      "path": "/invoices/inv-100",
+      "actor": "bob",
+      "expected": 403,
+      "body": {
+        "memo": "Unauthorized fixture change"
+      },
+      "verify_actor": "alice",
+      "expect_unchanged": true
+    },
+    {
+      "id": "cross-tenant-write",
+      "title": "A member of another tenant cannot change the invoice",
+      "method": "PATCH",
+      "path": "/invoices/inv-100",
+      "actor": "eve",
+      "expected": 403,
+      "body": {
+        "memo": "Unauthorized fixture change"
+      },
+      "verify_actor": "alice",
+      "expect_unchanged": true
+    },
+    {
+      "id": "owner-write",
+      "title": "The owner may change their invoice memo",
+      "method": "PATCH",
+      "path": "/invoices/inv-100",
+      "actor": "alice",
+      "expected": 200,
+      "body": {
+        "memo": "Owner approved fixture change"
+      },
+      "verify_actor": "alice",
+      "expected_response": {
+        "id": "inv-100",
+        "tenant": "north",
+        "owner": "alice",
+        "memo": "Owner approved fixture change"
+      }
+    },
+    {
+      "id": "tenant-admin-write",
+      "title": "A tenant administrator may change an invoice in their tenant",
+      "method": "PATCH",
+      "path": "/invoices/inv-100",
+      "actor": "nora",
+      "expected": 200,
+      "body": {
+        "memo": "Administrator approved fixture change"
+      },
+      "verify_actor": "alice",
+      "expected_response": {
+        "id": "inv-100",
+        "tenant": "north",
+        "owner": "alice",
+        "memo": "Administrator approved fixture change"
+      }
+    },
+    {
+      "id": "tenant-field-injection",
+      "title": "Memo updates cannot rewrite the invoice tenant",
+      "method": "PATCH",
+      "path": "/invoices/inv-100",
+      "actor": "alice",
+      "expected": 422,
+      "body": {
+        "memo": "Attempted property change",
+        "tenant": "south"
+      },
+      "verify_actor": "alice",
+      "expect_unchanged": true
+    }
+  ]
+}

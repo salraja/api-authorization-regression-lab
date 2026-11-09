@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "API Authorization Regression Lab",
+          "version": "0.1.0",
+          "rules": [
+            {
+              "id": "AUTHZ001",
+              "name": "AuthorizationPolicyRegression",
+              "shortDescription": {
+                "text": "The API response violated the expected access policy"
+              },
+              "help": {
+                "text": "Enforce tenant and ownership checks before returning or changing protected objects."
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "authorization",
+                  "CWE-639"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "AUTHZ001",
+          "level": "error",
+          "message": {
+            "text": "Another member of the same tenant cannot read an owner's invoice. Expected HTTP 403, received 200; response contract matches: True; readback matches: True; unauthorized state change: False."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "authzlab/cases.py",
+                  "uriBaseId": "%SRCROOT%"
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "caseIdentity/v1": "peer-read"
+          },
+          "properties": {
+            "caseId": "peer-read",
+            "evidenceSha256": "104a5daa1dbb9b3a44d2e3fb8acdfead0301f29e924eadbe85577ad84fb2ea12",
+            "fixture": "vulnerable"
+          }
+        },
+        {
+          "ruleId": "AUTHZ001",
+          "level": "error",
+          "message": {
+            "text": "A member of another tenant cannot read the invoice. Expected HTTP 403, received 200; response contract matches: True; readback matches: True; unauthorized state change: False."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "authzlab/cases.py",
+                  "uriBaseId": "%SRCROOT%"
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "caseIdentity/v1": "cross-tenant-read"
+          },
+          "properties": {
+            "caseId": "cross-tenant-read",
+            "evidenceSha256": "067d344ed5484d9f47ce9069e87c799ffd9c83da37337b49865c1880317930a6",
+            "fixture": "vulnerable"
+          }
+        },
+        {
+          "ruleId": "AUTHZ001",
+          "level": "error",
+          "message": {
+            "text": "Administrator privileges do not cross tenant boundaries. Expected HTTP 403, received 200; response contract matches: True; readback matches: True; unauthorized state change: False."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "authzlab/cases.py",
+                  "uriBaseId": "%SRCROOT%"
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "caseIdentity/v1": "cross-tenant-admin"
+          },
+          "properties": {
+            "caseId": "cross-tenant-admin",
+            "evidenceSha256": "98a253dcbf8486f048c86118f1c707aa65e0ab2b0f9748a48f306ae7e7821800",
+            "fixture": "vulnerable"
+          }
+        },
+        {
+          "ruleId": "AUTHZ001",
+          "level": "error",
+          "message": {
+            "text": "A peer cannot change an owner's invoice. Expected HTTP 403, received 200; response contract matches: True; readback matches: True; unauthorized state change: True."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "authzlab/cases.py",
+                  "uriBaseId": "%SRCROOT%"
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "caseIdentity/v1": "peer-write"
+          },
+          "properties": {
+            "caseId": "peer-write",
+            "evidenceSha256": "dcb3472913c1d0132f1133ffb6d3f5a3d013ea693f989ac1f4e1d100191acda6",
+            "fixture": "vulnerable"
+          }
+        },
+        {
+          "ruleId": "AUTHZ001",
+          "level": "error",
+          "message": {
+            "text": "A member of another tenant cannot change the invoice. Expected HTTP 403, received 200; response contract matches: True; readback matches: True; unauthorized state change: True."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "authzlab/cases.py",
+                  "uriBaseId": "%SRCROOT%"
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "caseIdentity/v1": "cross-tenant-write"
+          },
+          "properties": {
+            "caseId": "cross-tenant-write",
+            "evidenceSha256": "1de8b7c3dc02007878720f7f2a3dc20607f9c2cdcee7a78c228f3fb22ec90762",
+            "fixture": "vulnerable"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "api-authorization-regression-lab"
+version = "0.1.0"
+description = "A local API authorization regression lab with evidence and SARIF reports"
+requires-python = ">=3.11"
+dependencies = ["fastapi>=0.115,<1", "httpx>=0.28,<1", "uvicorn>=0.30,<1"]
+
+[project.optional-dependencies]
+test = ["pytest>=8,<10"]
+
+[project.scripts]
+authzlab = "authzlab.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["authzlab*"]
+
+[tool.setuptools.package-data]
+authzlab = ["policy.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

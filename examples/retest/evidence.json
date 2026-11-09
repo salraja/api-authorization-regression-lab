@@ -1,0 +1,305 @@
+{
+  "schema_version": "1.0",
+  "fixture": "secure",
+  "policy": {
+    "schema_version": "1.0",
+    "policy_name": "Synthetic invoice access policy",
+    "policy_version": "1.0.0",
+    "sha256": "d0c35ad27b0e60f916648eb5de77e61949e48f70008fefed2329ccea810d5697"
+  },
+  "created_utc": "2026-11-09T15:39:34.242400+00:00",
+  "scope": "Synthetic local FastAPI fixtures only; no external HTTP requests",
+  "summary": {
+    "total": 15,
+    "passed": 15,
+    "findings": 0
+  },
+  "results": [
+    {
+      "case_id": "public-catalog",
+      "title": "Anonymous users may read the public catalog",
+      "request": {
+        "method": "GET",
+        "path": "/catalog",
+        "actor": "anonymous"
+      },
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "unauthorized_state_change": false,
+      "response_contract_matches": true,
+      "readback_matches": true,
+      "case_contract_sha256": "be115b9683e0970d5c2275889da5ac19d2a22997852ab0f3dc7c70afd14a52ac",
+      "response_evidence": {},
+      "evidence_sha256": "e9ccf53d6fc73c2b40677193473270ae9a0047a8d8da84e6de8e9ff4e4009ca4"
+    },
+    {
+      "case_id": "anonymous-read",
+      "title": "Anonymous users cannot read an invoice",
+      "request": {
+        "method": "GET",
+        "path": "/invoices/inv-100",
+        "actor": "anonymous"
+      },
+      "expected_status": 401,
+      "actual_status": 401,
+      "passed": true,
+      "unauthorized_state_change": false,
+      "response_contract_matches": true,
+      "readback_matches": true,
+      "case_contract_sha256": "71384ac665e8379d791a5b4e89e02ac866dde4dea0de4160140ced35167e1b3e",
+      "response_evidence": {},
+      "evidence_sha256": "c9dc46de9d5ed749d83d8018fd63a749b5ca8b5e7c68c4a7490d8b8368f55c61"
+    },
+    {
+      "case_id": "invalid-token",
+      "title": "Unknown identities cannot read an invoice",
+      "request": {
+        "method": "GET",
+        "path": "/invoices/inv-100",
+        "actor": "unknown"
+      },
+      "expected_status": 401,
+      "actual_status": 401,
+      "passed": true,
+      "unauthorized_state_change": false,
+      "response_contract_matches": true,
+      "readback_matches": true,
+      "case_contract_sha256": "eae6e18b6cfd616da3e4a633994f9c43073509762e8a11e7612ddefbbc1163b9",
+      "response_evidence": {},
+      "evidence_sha256": "6960d7c9af5ce9d657048f7f904669daabf9c69fecf3ce8cd61fea52e88825de"
+    },
+    {
+      "case_id": "owner-read",
+      "title": "The invoice owner may read their invoice",
+      "request": {
+        "method": "GET",
+        "path": "/invoices/inv-100",
+        "actor": "alice"
+      },
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "unauthorized_state_change": false,
+      "response_contract_matches": true,
+      "readback_matches": true,
+      "case_contract_sha256": "c7dda144b2d38f87cd1731ce6171d9db2be443eabf50a85ae834ba392031945f",
+      "response_evidence": {
+        "id": "inv-100",
+        "tenant": "north",
+        "owner": "alice"
+      },
+      "evidence_sha256": "a64f64fa671f56a1b55905449f6f6c58032d8dd920a70937906379e6d7c82d6f"
+    },
+    {
+      "case_id": "peer-read",
+      "title": "Another member of the same tenant cannot read an owner's invoice",
+      "request": {
+        "method": "GET",
+        "path": "/invoices/inv-100",
+        "actor": "bob"
+      },
+      "expected_status": 403,
+      "actual_status": 403,
+      "passed": true,
+      "unauthorized_state_change": false,
+      "response_contract_matches": true,
+      "readback_matches": true,
+      "case_contract_sha256": "2c4c8e49771a37dfc904731b3253e830d69c6f5c0e29112fb54c08c61e118d5e",
+      "response_evidence": {},
+      "evidence_sha256": "fd4d1710b4a86153fd3d630d2e47204a1026217935a196ebe5a0c0b783cec8b3"
+    },
+    {
+      "case_id": "tenant-admin-read",
+      "title": "A tenant administrator may read an invoice in their tenant",
+      "request": {
+        "method": "GET",
+        "path": "/invoices/inv-100",
+        "actor": "nora"
+      },
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "unauthorized_state_change": false,
+      "response_contract_matches": true,
+      "readback_matches": true,
+      "case_contract_sha256": "e21fb0913e54148880eb76901e9f48bfaf87b0369666fb4128360abc0494859d",
+      "response_evidence": {
+        "id": "inv-100",
+        "tenant": "north",
+        "owner": "alice"
+      },
+      "evidence_sha256": "ae7479461a9abe96ad166015cf62c305861db5da948e1daa59c60888106eb7ea"
+    },
+    {
+      "case_id": "cross-tenant-read",
+      "title": "A member of another tenant cannot read the invoice",
+      "request": {
+        "method": "GET",
+        "path": "/invoices/inv-100",
+        "actor": "eve"
+      },
+      "expected_status": 403,
+      "actual_status": 403,
+      "passed": true,
+      "unauthorized_state_change": false,
+      "response_contract_matches": true,
+      "readback_matches": true,
+      "case_contract_sha256": "32bc58a5b75b6700d8e4ebbfcabdc6e51de2b9cf5a09185f66391c3d2d6e1fd4",
+      "response_evidence": {},
+      "evidence_sha256": "b963ba510e4c89ddc6d8f5bd07e3af6c44b42c0dd78e6cca2cad9ed03e7af752"
+    },
+    {
+      "case_id": "cross-tenant-admin",
+      "title": "Administrator privileges do not cross tenant boundaries",
+      "request": {
+        "method": "GET",
+        "path": "/invoices/inv-100",
+        "actor": "sam"
+      },
+      "expected_status": 403,
+      "actual_status": 403,
+      "passed": true,
+      "unauthorized_state_change": false,
+      "response_contract_matches": true,
+      "readback_matches": true,
+      "case_contract_sha256": "06d8371a35730c40a13f495bd71588db3a8f803cf68c3569694f6d3eac9c3c78",
+      "response_evidence": {},
+      "evidence_sha256": "fd3fbf2096274af09c211a4a0bf1a2681580da45527535f4f27bedfb2bc82795"
+    },
+    {
+      "case_id": "missing-object",
+      "title": "Unknown object identifiers return not found",
+      "request": {
+        "method": "GET",
+        "path": "/invoices/absent",
+        "actor": "alice"
+      },
+      "expected_status": 404,
+      "actual_status": 404,
+      "passed": true,
+      "unauthorized_state_change": false,
+      "response_contract_matches": true,
+      "readback_matches": true,
+      "case_contract_sha256": "0375788245f0c642fb49570321d6f26c09ab352aecf7a8ddbcc5a458e90b8ba9",
+      "response_evidence": {},
+      "evidence_sha256": "d830ecb98da079693810e3546f59f2bbf3dd9995fad9dbc8d8d5f11a175a824b"
+    },
+    {
+      "case_id": "anonymous-write",
+      "title": "Anonymous users cannot change an invoice",
+      "request": {
+        "method": "PATCH",
+        "path": "/invoices/inv-100",
+        "actor": "anonymous"
+      },
+      "expected_status": 401,
+      "actual_status": 401,
+      "passed": true,
+      "unauthorized_state_change": false,
+      "response_contract_matches": true,
+      "readback_matches": true,
+      "case_contract_sha256": "0ad36f91343b462a2430cc9ba5a13e5f5f68f80daa5d75f832884c6532e5090b",
+      "response_evidence": {},
+      "evidence_sha256": "d676a7d8b47343346f2e8fa6cf030a2d5cd813ca506610db81998efbb690fc82"
+    },
+    {
+      "case_id": "peer-write",
+      "title": "A peer cannot change an owner's invoice",
+      "request": {
+        "method": "PATCH",
+        "path": "/invoices/inv-100",
+        "actor": "bob"
+      },
+      "expected_status": 403,
+      "actual_status": 403,
+      "passed": true,
+      "unauthorized_state_change": false,
+      "response_contract_matches": true,
+      "readback_matches": true,
+      "case_contract_sha256": "e621e8a0a23cc9893d83b588a43f9a41bb2b660c830db27b17586bc3524a1c87",
+      "response_evidence": {},
+      "evidence_sha256": "885112f292692fb5206fea10cde51f7a27501b9dcc1e07c3be554526e7b35bb7"
+    },
+    {
+      "case_id": "cross-tenant-write",
+      "title": "A member of another tenant cannot change the invoice",
+      "request": {
+        "method": "PATCH",
+        "path": "/invoices/inv-100",
+        "actor": "eve"
+      },
+      "expected_status": 403,
+      "actual_status": 403,
+      "passed": true,
+      "unauthorized_state_change": false,
+      "response_contract_matches": true,
+      "readback_matches": true,
+      "case_contract_sha256": "b3da1d09a8190569470d7e62554cf221064b7b36c441d05481d8439173d1fd23",
+      "response_evidence": {},
+      "evidence_sha256": "fe306dd0b334826a164c26d090efbac539f8c4165d3c3a3138117be3a905f4a3"
+    },
+    {
+      "case_id": "owner-write",
+      "title": "The owner may change their invoice memo",
+      "request": {
+        "method": "PATCH",
+        "path": "/invoices/inv-100",
+        "actor": "alice"
+      },
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "unauthorized_state_change": false,
+      "response_contract_matches": true,
+      "readback_matches": true,
+      "case_contract_sha256": "d12edd573510e0dcbcb84e60566c1e766f34dc05165fa424a1ed9e719b92ee9c",
+      "response_evidence": {
+        "id": "inv-100",
+        "tenant": "north",
+        "owner": "alice"
+      },
+      "evidence_sha256": "f3dc127500fb207f4cac9d64230a438923da02d1a69a6095d8cb71c64b757969"
+    },
+    {
+      "case_id": "tenant-admin-write",
+      "title": "A tenant administrator may change an invoice in their tenant",
+      "request": {
+        "method": "PATCH",
+        "path": "/invoices/inv-100",
+        "actor": "nora"
+      },
+      "expected_status": 200,
+      "actual_status": 200,
+      "passed": true,
+      "unauthorized_state_change": false,
+      "response_contract_matches": true,
+      "readback_matches": true,
+      "case_contract_sha256": "38dd5f49e958a54e6fe81dd56de55b1a19ec9e57fdcef1e5d487524508b563c9",
+      "response_evidence": {
+        "id": "inv-100",
+        "tenant": "north",
+        "owner": "alice"
+      },
+      "evidence_sha256": "fad51119694029b5eeb9fa5206757c08d80d4b205f51cb238ae07240f11aebea"
+    },
+    {
+      "case_id": "tenant-field-injection",
+      "title": "Memo updates cannot rewrite the invoice tenant",
+      "request": {
+        "method": "PATCH",
+        "path": "/invoices/inv-100",
+        "actor": "alice"
+      },
+      "expected_status": 422,
+      "actual_status": 422,
+      "passed": true,
+      "unauthorized_state_change": false,
+      "response_contract_matches": true,
+      "readback_matches": true,
+      "case_contract_sha256": "6dbe9223b176c172cb819a8df30f4147e7bf2e40bb254bb646584bf561fb9e70",
+      "response_evidence": {},
+      "evidence_sha256": "ebc689285186e2fba11c2a6367f77e482b28810df6919bff4a829582d4980758"
+    }
+  ]
+}

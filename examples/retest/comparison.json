@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0",
+  "summary": {
+    "new": 0,
+    "open": 0,
+    "fixed": 5,
+    "regressed": 0,
+    "not_run": 0,
+    "policy_changed": 0,
+    "new_pass": 0,
+    "unchanged_pass": 10
+  },
+  "changes": [
+    {
+      "case_id": "anonymous-read",
+      "state": "unchanged_pass"
+    },
+    {
+      "case_id": "anonymous-write",
+      "state": "unchanged_pass"
+    },
+    {
+      "case_id": "cross-tenant-admin",
+      "state": "fixed"
+    },
+    {
+      "case_id": "cross-tenant-read",
+      "state": "fixed"
+    },
+    {
+      "case_id": "cross-tenant-write",
+      "state": "fixed"
+    },
+    {
+      "case_id": "invalid-token",
+      "state": "unchanged_pass"
+    },
+    {
+      "case_id": "missing-object",
+      "state": "unchanged_pass"
+    },
+    {
+      "case_id": "owner-read",
+      "state": "unchanged_pass"
+    },
+    {
+      "case_id": "owner-write",
+      "state": "unchanged_pass"
+    },
+    {
+      "case_id": "peer-read",
+      "state": "fixed"
+    },
+    {
+      "case_id": "peer-write",
+      "state": "fixed"
+    },
+    {
+      "case_id": "public-catalog",
+      "state": "unchanged_pass"
+    },
+    {
+      "case_id": "tenant-admin-read",
+      "state": "unchanged_pass"
+    },
+    {
+      "case_id": "tenant-admin-write",
+      "state": "unchanged_pass"
+    },
+    {
+      "case_id": "tenant-field-injection",
+      "state": "unchanged_pass"
+    }
+  ]
+}
